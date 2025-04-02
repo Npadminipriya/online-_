@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email OTP Verification</title>
+    <link rel="stylesheet" href="castevote1.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const email = urlParams.get("email");
+            const candidateId = urlParams.get("candidate_id");
+            
+            if (email) {
+                document.getElementById("email").value = email;
+            }
+        });
+
+        async function verifyOTP() {
+            let otp = document.getElementById("otp").value;
+            let email = document.getElementById("email").value;
+            const urlParams = new URLSearchParams(window.location.search);
+            const candidateId = urlParams.get("candidate_id");
+
+            console.log("Candidate ID:", candidateId); // Debugging line
+
+            if (!otp) {
+                alert("Please enter the OTP.");
+                return;
+            }
+
+            try {
+                let response = await fetch("http://127.0.0.1:5000/verify-otp", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, otp })
+                });
+
+                let result = await response.json();
+                console.log("OTP Verification Response:", result);
+
+                if (result.success) {
+                    alert("OTP Verified Successfully!");
+                    document.getElementById("message").innerText = "Verification Successful!";
+
+                    // Ensure the candidateId is valid before proceeding
+                    if (candidateId) {
+                        await castVote(candidateId);
+                    } else {
+                        alert("Error: Candidate ID not found.");
+                    }
+                } else {
+                    alert("Invalid OTP. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error verifying OTP:", error);
+            }
+        }
+
+
+        async function castVote(candidateId) {
+            console.log("Casting vote for candidate ID:", candidateId); // Debugging line
+
+            try {
+                let response = await fetch(`http://127.0.0.1:5000/cast_vote`, {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ candidate_id: candidateId }) // Ensure correct body format
+                });
+
+                let result = await response.json();
+                console.log("Cast Vote Response:", result);
+
+                if (result.success) {
+                    alert("Vote cast successfully! Redirecting...");
+                    window.location.href = `election_details.html?election_id=${result.election_id}&vote_success=true`;
+                } else {
+                    alert("Failed to cast vote. Try again.");
+                }
+            } catch (error) {
+                console.error("Error casting vote:", error);
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>OTP Verification</h2>
+        <p>An OTP has been sent to your email. Please enter it below to proceed.</p>
+        
+        <div id="otp-section">
+            <input type="hidden" id="email">
+            <input type="text" id="otp" placeholder="Enter OTP" maxlength="6">
+            <button onclick="verifyOTP()">Verify OTP</button>
+        </div>
+
+        <p id="message"></p>
+    </div>
+</body>
+</html>

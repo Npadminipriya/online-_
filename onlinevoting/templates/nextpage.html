@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Voting</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: left;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+        }
+        .logout {
+            align-self: flex-end;
+            margin-right: 20px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 15px;
+            padding: 15px;
+            width: 300px;
+            text-align: center;
+        }
+        .card img {
+            width: 100%;
+            height: 200px;
+            border-radius: 10px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 10px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+        }
+        .button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>DigiBallot</h1>
+        <h2 id="welcome-message">Welcome, Guest</h2>
+        <a class="logout" href="login1.html" style="color: white; text-decoration: none;">Logout</a>
+    </div>
+    
+    <div class="container">
+        <p>Loading elections...</p>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Retrieve username from localStorage
+            const username = localStorage.getItem("username") || "Guest";
+            document.getElementById("welcome-message").innerText = `Welcome, ${username}`;
+
+            /*fetch('http://127.0.0.1:5000/api/elections').then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => console.log("Fetched data:", data))
+            .catch(error => console.error('Fetch error:', error))*/
+            fetch('http://127.0.0.1:5000/api/elections')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.querySelector('.container');
+                    container.innerHTML = '';
+                    
+                    if (data.length === 0) {
+                        container.innerHTML = '<p>No elections available.</p>';
+                        return;
+                    }
+
+                    data.forEach(election => {
+                        const card = document.createElement('div');
+                        card.classList.add('card');
+                        card.innerHTML = `
+                            <img src="${election.image_url}" alt="${election.title}">
+                            <h2>${election.title}</h2>
+                            <p>${election.description}</p>
+                            <button class="button" onclick="viewDetails(${election.id})">View Details</button>
+                        `;
+                        container.appendChild(card);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching elections:', error);
+                    document.querySelector('.container').innerHTML = '<p>Error loading elections.</p>';
+                });
+        });
+
+        function viewDetails(electionId) {
+            window.location.href = `election_details.html?election_id=${electionId}`;
+        }
+    </script>
+</body>
+</html>
+

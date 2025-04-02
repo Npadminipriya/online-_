@@ -1,0 +1,60 @@
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Fullscreen background */
+body {
+    background: url("https://t3.ftcdn.net/jpg/06/64/88/96/360_F_664889600_PRilGFhlbRxUAwd9eTbufFHPOvsvT2Ov.jpg") no-repeat center center/cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: rgba(244, 240, 240, 0.475); /* Transparent White */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 300px;
+    backdrop-filter: blur(10px); /* Glass Effect */
+}
+
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+input::placeholder {
+    color: white;
+}
+
+button {
+    background: rgba(0, 0, 255, 0.8);
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    transition: 0.3s;
+}
+button:hover {
+    background: rgba(0, 0, 150, 0.8);
+}
+
+#message {
+    margin-top: 10px;
+    font-weight: bold;
+    color: white;
+}
