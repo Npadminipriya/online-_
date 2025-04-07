@@ -5,7 +5,6 @@ from flask_mail import Mail, Message
 from flask_cors import CORS
 import random
 from flask import Flask, render_template
-from backend.app import app
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend communication
@@ -162,5 +161,5 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()  # Ensure database tables are created
     #app.run(debug=True, port=5000)
-    port = int(os.environ.get("PORT", 81))
+    port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
